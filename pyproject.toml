@@ -1,0 +1,30 @@
+[project]
+name = "dictflat"
+version = "0.1.0"
+description = "A Python library to flatten a dictionary with nested dictionnaries and lists"
+authors = [
+    {name = "Arnaud Valmary", email = "github@valmary.eu"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pyyaml"
+]
+
+[tool.poetry]
+package-mode = true
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.test]
+optional = true
+[tool.poetry.group.test.dependencies]
+pytest = "==8.3.4"
+
+[tool.poetry.group.docs]
+optional = true
+[tool.poetry.group.docs.dependencies]
+mkdocs = "*"
