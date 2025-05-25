@@ -1,9 +1,10 @@
 from typing import Dict, List
 
+from test_dictflat.common_fct_test import date2dict, fct_build_id
+
 from dictflat import DictFlat
 from dictflat.dictflat import RENAME_ALL
 from dictflat.tool_functions import str_2_snakecase
-from tests.test_dictflat.common_fct_test import date2dict, fct_build_id
 
 
 def test_dictflat__list_no_dict() -> None:

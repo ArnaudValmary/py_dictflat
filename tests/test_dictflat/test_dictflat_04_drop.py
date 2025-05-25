@@ -1,7 +1,8 @@
 from typing import Dict, List
 
+from test_dictflat.common_fct_test import fct_build_id, fix_date
+
 from dictflat import DictFlat
-from tests.test_dictflat.common_fct_test import fct_build_id, fix_date
 
 
 def test_dictflat__drop() -> None:

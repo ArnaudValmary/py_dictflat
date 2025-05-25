@@ -1,7 +1,8 @@
 from typing import Dict, List
 
+from test_dictflat.common_fct_test import clean_ids
+
 from dictflat import DictFlat
-from tests.test_dictflat.common_fct_test import clean_ids
 
 
 def test_dictflat__nested_1() -> None:
