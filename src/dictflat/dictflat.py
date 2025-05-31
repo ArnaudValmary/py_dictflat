@@ -17,7 +17,7 @@ class DictFlat():
                  sep: str = '.',
                  id_field_name: str = ID_FIELD_NAME,
                  ref_field_prefix: str = REF_FIELD_PREFIX,
-                 rename: Optional[Dict[str, str]] = None,
+                 rename: Optional[Dict[str, Union[str, Callable]]] = None,
                  drop: Optional[Union[str, List[str]]] = None,
                  change: Optional[Dict[str, Callable]] = None,
                  object_prefix: Optional[str] = None,
@@ -33,7 +33,7 @@ class DictFlat():
         self.ref_field_prefix: str = ref_field_prefix
         if not rename:
             rename = None
-        self.rename: Optional[Dict[str, str]] = rename
+        self.rename: Optional[Dict[str, Union[str, Callable]]] = rename
         if not drop:
             drop = None
         elif not isinstance(drop, list):
@@ -53,8 +53,6 @@ class DictFlat():
             for k in self.dd_2_dict:
                 if self.dd_2_dict[k] is None:
                     self.dd_2_dict[k] = {}
-
-        self.flat_dict_result: Dict[str, List[Dict]] = {}
 
     def __init_flat_dict_list(self, global_dict_key: str) -> None:
         """Initialize the list of flatten dicts if the global result dict if not already initialized
@@ -105,7 +103,7 @@ class DictFlat():
     def __build_new_path(self,
                          field_name: str,
                          path: Optional[str] = None) -> str:
-        new_path: str = None
+        new_path: Optional[str] = None
         if path is None:
             new_path = field_name
         else:
@@ -113,7 +111,7 @@ class DictFlat():
         return new_path
 
     def __is_drop(self, value_path: str) -> bool:
-        return self.drop and value_path in self.drop
+        return bool(self.drop) and value_path in self.drop
 
     def __change_value(self, cur_value: Any, value_path: str) -> Any:
         new_value: Any = cur_value
@@ -126,30 +124,32 @@ class DictFlat():
         new_path: str = path
         if self.rename:
             if RENAME_ALL in self.rename:
-                fct: Callable = self.rename[RENAME_ALL]
-                if new_path.endswith(self.inner_sep_suffix):
-                    new_path = fct(new_path[:-self.inner_sep_suffix_len]) + self.inner_sep_suffix
-                else:
-                    new_path = fct(new_path)
+                fct: Union[str, Callable] = self.rename[RENAME_ALL]
+                if isinstance(fct, Callable):
+                    if new_path.endswith(self.inner_sep_suffix):
+                        new_path = fct(new_path[:-self.inner_sep_suffix_len]) + self.inner_sep_suffix
+                    else:
+                        new_path = fct(new_path)
             if new_path in self.rename:
                 fct_or_str: Union[str, Callable] = self.rename[new_path]
                 if isinstance(fct_or_str, str):
-                    new_path = self.rename[new_path]
+                    new_path = fct_or_str
                 else:
-                    new_path = fct(new_path)
+                    new_path = fct_or_str(new_path)
         return new_path
 
     def __flat_list_or_tuple(self,
                              lt: Union[List, Tuple],
                              path: str,
-                             father_path: str = None,
+                             father_path: Optional[str] = None,
                              father_id: Any = None) -> None:
 
         extra: Dict = {}
         counter_flag: bool = False
+        counter_field: str = ""
         if self.list_2_dict and path in self.list_2_dict:
             l2d_def: Dict = self.list_2_dict[path]
-            counter_field: str = l2d_def.get('counter_field', 'idx')
+            counter_field = l2d_def.get('counter_field', 'idx')
             starts_at: int = l2d_def.get('starts_at', 1)
             if counter_field and starts_at is not None:
                 extra[counter_field] = starts_at
@@ -177,31 +177,33 @@ class DictFlat():
             if counter_flag:
                 extra[counter_field] += 1
 
-    def __flat_dd_2_d(self, elt_value, value_path) -> Dict:
+    def __flat_dd_2_d(self, elt_value: Dict, value_path: str) -> Dict:
 
-        dd2d_def: Dict = self.dd_2_dict[value_path]
+        if self.dd_2_dict and value_path in self.dd_2_dict:
+            dd2d_def: Dict = self.dd_2_dict[value_path]
 
-        reverse: bool = dd2d_def.get('reverse', False)
-        obj_sep: bool = dd2d_def.get('sep', self.sep)
+            reverse: bool = dd2d_def.get('reverse', False)
+            obj_sep: bool = dd2d_def.get('sep', self.sep)
 
-        new_object: Dict[str, Any] = {}
-        for object_id in elt_value:
-            the_object: Dict = elt_value[object_id]
-            if isinstance(the_object, dict):
-                for object_key in the_object:
-                    if reverse:
-                        new_object['%s%s%s' % (object_key, obj_sep, object_id)] = the_object[object_key]
-                    else:
-                        new_object['%s%s%s' % (object_id, obj_sep, object_key)] = the_object[object_key]
-            else:
-                new_object['%s' % object_id] = the_object
+            new_object: Dict[str, Any] = {}
+            for object_id in elt_value:
+                the_object: Dict = elt_value[object_id]
+                if isinstance(the_object, dict):
+                    for object_key in the_object:
+                        if reverse:
+                            new_object['%s%s%s' % (object_key, obj_sep, object_id)] = the_object[object_key]
+                        else:
+                            new_object['%s%s%s' % (object_id, obj_sep, object_key)] = the_object[object_key]
+                else:
+                    new_object['%s' % object_id] = the_object
 
-        return new_object
+            return new_object
+        return elt_value
 
     def __flat_dict(self,
                     d: Dict,
                     path: str,
-                    father_path: str = None,
+                    father_path: Optional[str] = None,
                     father_id: Any = None) -> None:
 
         if not d:
@@ -237,8 +239,7 @@ class DictFlat():
 
             if isinstance(new_elt_value, dict):
 
-                if self.dd_2_dict and value_path in self.dd_2_dict:
-                    new_elt_value = self.__flat_dd_2_d(new_elt_value, value_path)
+                new_elt_value = self.__flat_dd_2_d(new_elt_value, value_path)
 
                 # Inner dictionnary
                 self.__flat_dict(

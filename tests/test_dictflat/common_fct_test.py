@@ -15,9 +15,8 @@ def clean_ids(d: Dict) -> None:
                     elt[k_elt] = 'r_%d' % n
 
 
-def fct_build_id(d: Dict, path: str) -> Any:
+def fct_build_id(d: Dict, path: str) -> str:
     id: Any = None
-    print(f"path={path}")
     id = sha256(
         '#'.join(
             [
@@ -34,7 +33,7 @@ def fix_date(fieldname: str, value: str) -> str:
     return datetime.strptime(value, '%d/%m/%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S')
 
 
-def date2dict(fieldname: str, value: str) -> str:
+def date2dict(fieldname: str, value: str) -> Dict:
     lst: List[str] = fix_date(fieldname, value).split('T')
     return {
         'date': lst[0],

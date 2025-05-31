@@ -177,7 +177,7 @@ def test_dictflat__list_counter_field() -> None:
         list_2_object={
             'rk.Phone_Numbers': {
                 'counter_field': 'count',
-                'starts_at': 1
+                'starts_at': 0
             }
         }
     ).flat(
@@ -231,16 +231,16 @@ def test_dictflat__list_counter_field() -> None:
         ],
         'rk.Phone_Numbers': [
             {
-                '__id': '2849245103fcc026',
+                '__id': '30fb5bc71274e531',
                 '__ref__rk': '2a02485bc672ee47',
-                'count': 1,
+                'count': 0,
                 'type': 'home',
                 'number': '555-1234'
             },
             {
-                '__id': 'e1e98b582d437ee4',
+                '__id': '6b74835b56e08367',
                 '__ref__rk': '2a02485bc672ee47',
-                'count': 2,
+                'count': 1,
                 'type': 'work',
                 'number': '555-5678'
             },

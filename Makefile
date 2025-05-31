@@ -4,14 +4,20 @@ poetry_version        = $(shell poetry --version)
 poetry_env_path       = $(shell poetry env info --path)
 poetry_python_version = $(shell poetry run python --version 2>&1)
 
-pytest_test_dir := .pytest_cache
-pytest_cov_dir  := htmlcov
+pytest_test_dir = .pytest_cache
+pytest_cov_dir  = htmlcov
+
+project_name = $(shell cat pyproject.toml | grep -E '^name *= *' | head -1 | cut -d = -f 2- | tr -d " ")
+project_version = $(shell cat pyproject.toml | grep -E '^version *= *' | cut -d = -f 2- | tr -d " ")
 
 doc:
 	@echo -n
 	@echo "Poetry     : $(poetry_version)"
 	@echo "• env path : $(poetry_env_path)"
 	@echo "• Python   : $(poetry_python_version)"
+	@echo "Project"
+	@echo "• Name     : $(project_name)"
+	@echo "• Version  : $(project_version)"
 	@echo
 	@echo "Targets"
 	@echo "• Dependencies"
@@ -27,9 +33,10 @@ doc:
 	@echo "  → cov           : Run coverage"
 	@echo "  → cov_open      : Run coverage and open result with firefox (in '$(pytest_cov_dir)' directory)"
 	@echo "  → cov_clean     : Clean coverage result"
-	@echo "• Build"
+	@echo "• Build & Publish"
 	@echo "  → dist          : Build wheel package"
 	@echo "  → dist_clean    : Clean package directory"
+	@echo "  → publish       : Publish"
 	@echo "• Misc"
 	@echo "  → clean         : Call all '*_clean' targets"
 	@echo "  → force         : Call 'clean', 'deps_all' and 'test' targets"
@@ -73,6 +80,9 @@ dist_clean:
 
 dist: dist_clean
 	poetry build
+
+publish: dist
+	poetry publish
 
 clean: deps_clean test_clean cov_clean dist_clean
 
