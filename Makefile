@@ -64,7 +64,7 @@ test_clean:
 	rm -rf $(pytest_test_dir)
 
 test: test_clean
-	poetry run pytest --verbose -vv
+	poetry run pytest --verbose -vvv -r A
 
 cov_clean:
 	rm -rf $(pytest_cov_dir) .coverage

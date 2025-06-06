@@ -999,36 +999,38 @@ The value is the definition of treatment:
 
 Example:
 
-```mermaid
-%%{init: {'themeVariables': { 'fontFamily': 'monospace'}}}%%
-graph LR;
-  from["
-&quot;miracles&quot;: {
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;first&quot;:&nbsp;{
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;k&quot;:&nbsp;&quot;one&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;e&quot;:&nbsp;&quot;e-one&quot;
-&nbsp;&nbsp;&nbsp;&nbsp;},
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;second&quot;:&nbsp;{
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;k&quot;:&nbsp;&quot;two&quot;
-&nbsp;&nbsp;&nbsp;&nbsp;},
-&nbsp;&nbsp;&nbsp;&nbsp;&quot;third&quot;:&nbsp;&quot;three&quot;
+From:
+
+```text
+{
+    "miracles": {
+        "first": {
+            "k": "one",
+            "e": "e-one"
+        },
+        "second": {
+            "k": "two"
+        },
+        "third": "three"
+    }
 }
-"]
-  to["
-'rk.miracles': [
-&nbsp;&nbsp;&nbsp;&nbsp;{
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;__id&quot;:&nbsp;&quot;041102055056a3a8&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;__ref__rk&quot;:&nbsp;&quot;2a02485bc672ee47&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;first/k&quot;:&nbsp;&quot;one&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;first/e&quot;:&nbsp;&quot;e-one&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;second/k&quot;:&nbsp;&quot;two&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;third&quot;:&nbsp;&quot;three&quot;,
-&nbsp;&nbsp;&nbsp;&nbsp;},
-]
-"]
-  from-->to
-  style from text-align:left
-  style to text-align:left
+```
+
+To:
+
+```txt
+{
+    "rk.miracles": [
+        {
+            "__id": "041102055056a3a8",
+            "__ref__rk": "2a02485bc672ee47",
+            "first/k": "one",
+            "first/e": "e-one",
+            "second/k": "two",
+            "third": "three",
+        },
+    ]
+}
 ```
 
 ```python
@@ -1117,5 +1119,79 @@ Result:
             "third": "three",
         },
     ],
+}
+```
+
+### Nested dictionnaries with simple key names
+
+When you don't want long key names.
+
+How: Use init function "`simple_keys`" parameter.
+
+`simple_keys` parameter signature:
+
+```python
+bool
+```
+
+Default value is `False`.
+
+Example:
+
+```python
+DictFlat(
+    root_key="rk",
+    simple_keys=True
+).flat(
+    d={
+        "name": "John",
+        "birth": {
+            "address": {
+                "street": {
+                    "number": "123",
+                    "road": "Main St"
+                },
+                "city": "Anytown",
+                "state": "CA"
+            },
+            "date": "10/06/1976 01:10:35"
+        }
+    }
+)
+```
+
+Result:
+
+```json
+{
+    "rk": [
+        {
+            "__id": "i_1",
+            "name": "John"
+        }
+    ],
+    "birth": [
+        {
+            "__id": "i_2",
+            "__ref__rk": "r_3",
+            "date": "10/06/1976 01:10:35",
+        }
+    ],
+    "address": [
+        {
+            "__id": "i_4",
+            "__ref__birth": "r_5",
+            "city": "Anytown",
+            "state": "CA"
+        }
+    ],
+    "street": [
+        {
+            "__id": "i_6",
+            "__ref__address": "r_7",
+            "number": "123",
+            "road": "Main St",
+        },
+    ]
 }
 ```

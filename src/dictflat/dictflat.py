@@ -25,7 +25,8 @@ class DictFlat():
                  list_2_object: Optional[Dict[str, Dict]] = None,
                  dict_of_dicts_2_dict: Optional[Dict[str, Dict]] = None,
                  fct_build_id: Optional[Callable] = None,
-                 inner_suffix: str = INNER_SUFFIX) -> None:
+                 inner_suffix: str = INNER_SUFFIX,
+                 simple_keys: bool = False) -> None:
 
         self.flat_dict_key: str = flat_dict_key
         self.sep: str = sep
@@ -48,6 +49,7 @@ class DictFlat():
         self.inner_suffix: str = inner_suffix
         self.inner_sep_suffix: Final[str] = '%s%s' % (self.sep, self.inner_suffix)
         self.inner_sep_suffix_len: Final[int] = len(self.inner_sep_suffix)
+        self.simple_key: bool = simple_keys
 
         if self.dd_2_dict:
             for k in self.dd_2_dict:
@@ -104,7 +106,7 @@ class DictFlat():
                          field_name: str,
                          path: Optional[str] = None) -> str:
         new_path: Optional[str] = None
-        if path is None:
+        if path is None or self.simple_key:
             new_path = field_name
         else:
             new_path = '%s%s%s' % (path, self.sep, field_name)
