@@ -51,11 +51,6 @@ class DictFlat():
         self.inner_sep_suffix_len: Final[int] = len(self.inner_sep_suffix)
         self.simple_key: bool = simple_keys
 
-        if self.dd_2_dict:
-            for k in self.dd_2_dict:
-                if self.dd_2_dict[k] is None:
-                    self.dd_2_dict[k] = {}
-
     def __init_flat_dict_list(self, global_dict_key: str) -> None:
         """Initialize the list of flatten dicts if the global result dict if not already initialized
 

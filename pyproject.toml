@@ -1,6 +1,6 @@
 [project]
 name = "dictflat"
-version = "0.1.3"
+version = "0.1.4"
 description = "A Python library to flatten a dictionary with nested dictionnaries and lists"
 authors = [{name = "Arnaud Valmary"}]
 readme = "README.md"
