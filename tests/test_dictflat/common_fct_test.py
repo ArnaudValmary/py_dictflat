@@ -2,6 +2,8 @@ from datetime import datetime
 from hashlib import sha256
 from typing import Any, Dict, List
 
+from dictflat.dictflat import CONTEXT_LEVEL
+
 
 def clean_ids(d: Dict) -> None:
     n: int = 0
@@ -26,6 +28,23 @@ def fct_build_id(d: Dict, path: str) -> str:
             ]
         ).encode()
     ).hexdigest()[:16]
+    return id
+
+
+def fct_build_id_with_context(d: Dict, path: str, context: Dict) -> str:
+
+    if context[CONTEXT_LEVEL] == 1:
+        id: str = context['root_id_format'] % d
+    else:
+        id: str = sha256(
+            '#'.join(
+                [
+                    str(d.get(k, '?%s?' % k))
+                    for k in d
+                    if not k.startswith('_') and not isinstance(d.get(k, []), (dict, list, tuple))
+                ]
+            ).encode()
+        ).hexdigest()[:16]
     return id
 
 

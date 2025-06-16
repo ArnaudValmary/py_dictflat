@@ -2,12 +2,17 @@
 
 from typing import Any, Callable, Dict, Final, List, Optional, Tuple, Union
 
+from pyoverinspect.overinspect import get_fct_parameter_names
+
 from .tool_functions import get_uuid
 
 RENAME_ALL: Final[str] = '__all__'
 INNER_SUFFIX: Final[str] = '__inner'
 ID_FIELD_NAME: Final[str] = '__id'
 REF_FIELD_PREFIX: Final[str] = '__ref__'
+CONTEXT_LEVEL: Final[str] = '__level'
+CONTEXT_PATH: Final[str] = '__path'
+CONTEXT_ELEMENT: Final[str] = '__element'
 
 
 class DictFlat():
@@ -26,7 +31,8 @@ class DictFlat():
                  dict_of_dicts_2_dict: Optional[Dict[str, Dict]] = None,
                  fct_build_id: Optional[Callable] = None,
                  inner_suffix: str = INNER_SUFFIX,
-                 simple_keys: bool = False) -> None:
+                 simple_keys: bool = False,
+                 context: Optional[Dict] = None) -> None:
 
         self.flat_dict_key: str = flat_dict_key
         self.sep: str = sep
@@ -50,6 +56,11 @@ class DictFlat():
         self.inner_sep_suffix: Final[str] = '%s%s' % (self.sep, self.inner_suffix)
         self.inner_sep_suffix_len: Final[int] = len(self.inner_sep_suffix)
         self.simple_key: bool = simple_keys
+        if context is None:
+            self.context: Dict[str, Any] = {}
+        else:
+            self.context: Dict[str, Any] = context
+        self.context[CONTEXT_LEVEL] = 0
 
     def __init_flat_dict_list(self, global_dict_key: str) -> None:
         """Initialize the list of flatten dicts if the global result dict if not already initialized
@@ -69,7 +80,10 @@ class DictFlat():
             return get_uuid()
         else:
             fct: Callable = self.fct_build_id
-            return fct(d=d, path=path)
+            if 'context' in get_fct_parameter_names(fct):
+                return fct(d=d, path=path, context=self.context)
+            else:
+                return fct(d=d, path=path)
 
     def __build_new_flat_dict(self,
                               d: Dict,
@@ -114,7 +128,10 @@ class DictFlat():
         new_value: Any = cur_value
         if self.change and value_path in self.change:
             fct_change_value: Callable = self.change[value_path]
-            new_value = fct_change_value(fieldname=value_path, value=cur_value)
+            if 'context' in get_fct_parameter_names(fct_change_value):
+                new_value = fct_change_value(fieldname=value_path, value=cur_value, context=self.context)
+            else:
+                new_value = fct_change_value(fieldname=value_path, value=cur_value)
         return new_value
 
     def __rename_path(self, path: str) -> str:
@@ -126,13 +143,19 @@ class DictFlat():
                     if new_path.endswith(self.inner_sep_suffix):
                         new_path = fct(new_path[:-self.inner_sep_suffix_len]) + self.inner_sep_suffix
                     else:
-                        new_path = fct(new_path)
+                        if 'context' in get_fct_parameter_names(fct):
+                            new_path = fct(new_path, context=self.context)
+                        else:
+                            new_path = fct(new_path)
             if new_path in self.rename:
                 fct_or_str: Union[str, Callable] = self.rename[new_path]
                 if isinstance(fct_or_str, str):
                     new_path = fct_or_str
                 else:
-                    new_path = fct_or_str(new_path)
+                    if 'context' in get_fct_parameter_names(fct_or_str):
+                        new_path = fct_or_str(new_path, context=self.context)
+                    else:
+                        new_path = fct_or_str(new_path)
         return new_path
 
     def __flat_list_or_tuple(self,
@@ -206,6 +229,9 @@ class DictFlat():
         if not d:
             return
 
+        self.context[CONTEXT_LEVEL] += 1
+        self.context[CONTEXT_PATH] = path
+
         self.__init_flat_dict_list(path)
 
         current_dict: Dict[str, Any] = self.__build_new_flat_dict(
@@ -217,6 +243,8 @@ class DictFlat():
         current_dict_id: Any = current_dict[self.id_field_name]
 
         for elt_name in d:
+
+            self.context[CONTEXT_ELEMENT] = elt_name
 
             # Get value
             elt_value: Any = d[elt_name]
@@ -263,7 +291,14 @@ class DictFlat():
 
                 current_dict[new_elt_name] = new_elt_value
 
+        self.context[CONTEXT_LEVEL] -= 1
+        self.context[CONTEXT_PATH] = None
+        self.context[CONTEXT_ELEMENT] = None
+
     def flat(self, d: Dict) -> Dict[str, List[Dict]]:
         self.flat_dict_result: Dict = {}
+        self.context[CONTEXT_LEVEL] = 0
+        self.context[CONTEXT_PATH] = None
+        self.context[CONTEXT_ELEMENT] = None
         self.__flat_dict(d=d, path=self.root_key)
         return self.flat_dict_result

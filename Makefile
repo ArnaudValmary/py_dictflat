@@ -64,13 +64,13 @@ test_clean:
 	rm -rf $(pytest_test_dir)
 
 test: test_clean
-	poetry run pytest --verbose -vvv -r A
+	poetry run pytest --capture=no --verbose -vvv -r A
 
 cov_clean:
 	rm -rf $(pytest_cov_dir) .coverage
 
 cov: cov_clean
-	poetry run pytest --cov --cov-report=html:$(pytest_cov_dir)
+	poetry run pytest --capture=no --cov --cov-report=html:$(pytest_cov_dir)
 
 cov_open: cov
 	firefox "file://$(cur_dir)/htmlcov/index.html"

@@ -1,6 +1,6 @@
 [project]
 name = "dictflat"
-version = "0.1.4"
+version = "0.1.5"
 description = "A Python library to flatten a dictionary with nested dictionnaries and lists"
 authors = [{name = "Arnaud Valmary"}]
 readme = "README.md"
@@ -22,6 +22,7 @@ poetry-plugin-export = ">=1.8"
 
 [tool.poetry.dependencies]
 python = ">=3.9"
+py_overinspect = "0.1.0"
 
 [tool.poetry.group.dev]
 optional = true
