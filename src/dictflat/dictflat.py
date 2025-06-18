@@ -10,7 +10,7 @@ RENAME_ALL: Final[str] = '__all__'
 INNER_SUFFIX: Final[str] = '__inner'
 ID_FIELD_NAME: Final[str] = '__id'
 REF_FIELD_PREFIX: Final[str] = '__ref__'
-CONTEXT_LEVEL: Final[str] = '__level'
+CONTEXT_DEPTH: Final[str] = '__depth'
 CONTEXT_PATH: Final[str] = '__path'
 CONTEXT_ELEMENT: Final[str] = '__element'
 
@@ -60,7 +60,7 @@ class DictFlat():
             self.context: Dict[str, Any] = {}
         else:
             self.context: Dict[str, Any] = context
-        self.context[CONTEXT_LEVEL] = 0
+        self.context[CONTEXT_DEPTH] = 0
 
     def __init_flat_dict_list(self, global_dict_key: str) -> None:
         """Initialize the list of flatten dicts if the global result dict if not already initialized
@@ -176,6 +176,10 @@ class DictFlat():
                 counter_flag = True
 
         for elt in lt:
+
+            self.context[CONTEXT_ELEMENT] = elt
+            self.context[CONTEXT_PATH] = path
+
             if not isinstance(elt, dict):
                 # List element is not a dictionnary -> convert it to dictionnary
 
@@ -193,6 +197,9 @@ class DictFlat():
                 father_path=father_path,
                 father_id=father_id
             )
+
+            self.context[CONTEXT_ELEMENT] = elt
+            self.context[CONTEXT_PATH] = path
 
             if counter_flag:
                 extra[counter_field] += 1
@@ -229,7 +236,7 @@ class DictFlat():
         if not d:
             return
 
-        self.context[CONTEXT_LEVEL] += 1
+        self.context[CONTEXT_DEPTH] += 1
         self.context[CONTEXT_PATH] = path
 
         self.__init_flat_dict_list(path)
@@ -274,6 +281,9 @@ class DictFlat():
                     father_id=current_dict_id
                 )
 
+                self.context[CONTEXT_ELEMENT] = elt_name
+                self.context[CONTEXT_PATH] = path
+
             elif isinstance(new_elt_value, (list, tuple)):
                 # Inner list or tuple
                 self.__flat_list_or_tuple(
@@ -283,6 +293,9 @@ class DictFlat():
                     father_id=current_dict_id
                 )
 
+                self.context[CONTEXT_ELEMENT] = elt_name
+                self.context[CONTEXT_PATH] = path
+
             else:
                 # Other types
 
@@ -291,13 +304,13 @@ class DictFlat():
 
                 current_dict[new_elt_name] = new_elt_value
 
-        self.context[CONTEXT_LEVEL] -= 1
+        self.context[CONTEXT_DEPTH] -= 1
         self.context[CONTEXT_PATH] = None
         self.context[CONTEXT_ELEMENT] = None
 
     def flat(self, d: Dict) -> Dict[str, List[Dict]]:
         self.flat_dict_result: Dict = {}
-        self.context[CONTEXT_LEVEL] = 0
+        self.context[CONTEXT_DEPTH] = 0
         self.context[CONTEXT_PATH] = None
         self.context[CONTEXT_ELEMENT] = None
         self.__flat_dict(d=d, path=self.root_key)
