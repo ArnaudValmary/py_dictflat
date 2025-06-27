@@ -64,6 +64,11 @@ def fix_street(fieldname: str, value: str, context: Dict) -> str:
     return value
 
 
+def str2list(fieldname: str, value: Dict) -> Dict:
+    value['elements'] = [x.strip() for x in value.get('elements', '').split(',')]
+    return value
+
+
 def date2dict(fieldname: str, value: str) -> Dict:
     lst: List[str] = fix_date(fieldname, value).split('T')
     return {

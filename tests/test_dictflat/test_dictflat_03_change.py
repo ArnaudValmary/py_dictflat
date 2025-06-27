@@ -1,8 +1,15 @@
 from typing import Dict, List
 
-from test_dictflat.common_fct_test import date2dict, fct_build_id, fix_date, fix_street
+from test_dictflat.common_fct_test import (
+    date2dict,
+    fct_build_id,
+    fix_date,
+    fix_street,
+    str2list,
+)
 
 from dictflat import DictFlat
+from dictflat.dictflat import CHANGE_ROOT
 
 
 def test_dictflat__change_value_simple() -> None:
@@ -158,5 +165,47 @@ def test_dictflat__change_value_with_context() -> None:
                 'city': 'Anytown',
                 'state': 'CA'
             }
+        ]
+    }
+
+
+def test_dictflat__change_root_value() -> None:
+    df: Dict[str, List] = DictFlat(
+        root_key='rk',
+        fct_build_id=fct_build_id,
+        change={
+            CHANGE_ROOT: str2list,
+        }
+    ).flat(
+        d={
+            'name': 'John',
+            'pers_id': 12,
+            "elements": "x, y, z"
+        }
+    )
+    assert df == {
+        'rk': [
+            {
+                '__id': '2a02485bc672ee47',
+                'pers_id': 12,
+                'name': 'John'
+            }
+        ],
+        'rk.elements': [
+            {
+                '__id': '2d711642b726b044',
+                '__ref__rk': '2a02485bc672ee47',
+                'rk.elements.__inner': 'x',
+            },
+            {
+                '__id': 'a1fce4363854ff88',
+                '__ref__rk': '2a02485bc672ee47',
+                'rk.elements.__inner': 'y',
+            },
+            {
+                '__id': '594e519ae499312b',
+                '__ref__rk': '2a02485bc672ee47',
+                'rk.elements.__inner': 'z',
+            },
         ]
     }

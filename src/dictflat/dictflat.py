@@ -7,6 +7,7 @@ from pyoverinspect.overinspect import get_fct_parameter_names
 from .tool_functions import get_uuid
 
 RENAME_ALL: Final[str] = '__all__'
+CHANGE_ROOT: Final[str] = '\0x01__root__'
 INNER_SUFFIX: Final[str] = '__inner'
 ID_FIELD_NAME: Final[str] = '__id'
 REF_FIELD_PREFIX: Final[str] = '__ref__'
@@ -313,5 +314,9 @@ class DictFlat():
         self.context[CONTEXT_DEPTH] = 0
         self.context[CONTEXT_PATH] = None
         self.context[CONTEXT_ELEMENT] = None
+
+        # Change root dict value ?
+        self.__change_value(cur_value=d, value_path=CHANGE_ROOT)
+
         self.__flat_dict(d=d, path=self.root_key)
         return self.flat_dict_result

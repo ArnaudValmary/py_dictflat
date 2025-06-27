@@ -235,3 +235,68 @@ Result:
     ]
 }
 ```
+
+#### Change root dictionnary content
+
+How: Same first example, use init function "`change`" parameter.
+
+The "`change`" dictionnary key is "`CHANGE_ROOT`".
+
+An example:
+
+With `fix_street` function example:
+
+```python
+def str2list(fieldname: str, value: Dict) -> Dict:
+    value['elements'] = [x.strip() for x in value.get('elements', '').split(',')]
+    return value
+```
+
+The code :
+
+```python
+DictFlat(
+    root_key='rk',
+    fct_build_id=fct_build_id,
+    change={
+        CHANGE_ROOT: str2list,
+    }
+).flat(
+    d={
+        'name': 'John',
+        'pers_id': 12,
+        "elements": "x, y, z"
+    }
+)
+```
+
+Result:
+
+```json
+{
+    "rk": [
+        {
+            "__id": "2a02485bc672ee47",
+            "pers_id": 12,
+            "name": "John"
+        }
+    ],
+    "rk.elements": [
+        {
+            "__id": "2d711642b726b044",
+            "__ref__rk": "2a02485bc672ee47",
+            "rk.elements.__inner": "x",
+        },
+        {
+            "__id": "a1fce4363854ff88",
+            "__ref__rk": "2a02485bc672ee47",
+            "rk.elements.__inner": "y",
+        },
+        {
+            "__id": "594e519ae499312b",
+            "__ref__rk": "2a02485bc672ee47",
+            "rk.elements.__inner": "z",
+        },
+    ]
+}
+```
