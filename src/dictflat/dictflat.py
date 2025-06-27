@@ -6,14 +6,14 @@ from pyoverinspect.overinspect import get_fct_parameter_names
 
 from .tool_functions import get_uuid
 
-RENAME_ALL: Final[str] = '__all__'
-CHANGE_ROOT: Final[str] = '\0x01__root__'
+RENAME_ALL: Final[str] = '__\x01__all__'
+CHANGE_ROOT: Final[str] = '__\x01__root__'
 INNER_SUFFIX: Final[str] = '__inner'
 ID_FIELD_NAME: Final[str] = '__id'
 REF_FIELD_PREFIX: Final[str] = '__ref__'
-CONTEXT_DEPTH: Final[str] = '__depth'
-CONTEXT_PATH: Final[str] = '__path'
-CONTEXT_ELEMENT: Final[str] = '__element'
+CONTEXT_DEPTH: Final[str] = '__\x01__depth'
+CONTEXT_PATH: Final[str] = '__\x01__path'
+CONTEXT_ELEMENT: Final[str] = '__\x01__element'
 
 
 class DictFlat():
