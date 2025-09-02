@@ -10,14 +10,23 @@ pytest_cov_dir  = htmlcov
 project_name = $(shell cat pyproject.toml | grep -E '^name *= *' | head -1 | cut -d = -f 2- | tr -d " ")
 project_version = $(shell cat pyproject.toml | grep -E '^version *= *' | cut -d = -f 2- | tr -d " ")
 
+v_2_l_to="', '"
+project_version_list = ['$(subst .,$(v_2_l_to),$(project_version))']
+
+.PHONY: doc
+.PHONY: deps deps_clean deps_all deps_show deps_show_all
+.PHONY: test test_clean
+.PHONY: cov cov_clean cov_open
+.PHONY: dist dist_clean
+.PHONY: clean force
+
 doc:
-	@echo -n
 	@echo "Poetry     : $(poetry_version)"
 	@echo "• env path : $(poetry_env_path)"
 	@echo "• Python   : $(poetry_python_version)"
 	@echo "Project"
 	@echo "• Name     : $(project_name)"
-	@echo "• Version  : $(project_version)"
+	@echo "• Version  : $(project_version) → $(project_version_list)"
 	@echo
 	@echo "Targets"
 	@echo "• Dependencies"
@@ -44,7 +53,7 @@ doc:
 
 deps_clean:
 	poetry env remove --all
-	# rm -rf "$(poetry_env_path)"
+	@# rm -rf "$(poetry_env_path)"
 	rm -f poetry.lock
 
 deps: deps_clean
@@ -79,6 +88,7 @@ dist_clean:
 	rm -rf dist
 
 dist: dist_clean
+	sed -ie "s/^\(DICTFLAT_VERSION: Final\[List\[str\]\] = \).*$$/\1$(project_version_list)/" ./src/dictflat/dictflat.py
 	poetry build
 
 publish: dist

@@ -6,6 +6,10 @@ from pyoverinspect.overinspect import get_fct_parameter_names
 
 from .tool_functions import get_uuid
 
+DICTFLAT_VERSION: Final[List[str]] = ['0', '1', '9']
+DICTFLAT_FULL_VERSION: Final[str] = '.'.join(DICTFLAT_VERSION)
+
+
 RENAME_ALL: Final[str] = '__\x01__all__'
 CHANGE_ROOT: Final[str] = '__\x01__root__'
 INNER_SUFFIX: Final[str] = '__inner'

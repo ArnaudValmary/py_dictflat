@@ -3,6 +3,8 @@ from .dictflat import (
     CONTEXT_DEPTH,
     CONTEXT_ELEMENT,
     CONTEXT_PATH,
+    DICTFLAT_FULL_VERSION,
+    DICTFLAT_VERSION,
     RENAME_ALL,
     DictFlat,
 )
