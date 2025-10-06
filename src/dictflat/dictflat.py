@@ -6,11 +6,7 @@ from pyoverinspect.overinspect import get_fct_parameter_names
 
 from .tool_functions import get_uuid
 
-DICTFLAT_VERSION: Final[List[str]] = ['0', '1', '9']
-DICTFLAT_FULL_VERSION: Final[str] = '.'.join(DICTFLAT_VERSION)
-
-
-RENAME_ALL: Final[str] = '__\x01__all__'
+ALL: Final[str] = '__\x01__all__'
 CHANGE_ROOT: Final[str] = '__\x01__root__'
 INNER_SUFFIX: Final[str] = '__inner'
 ID_FIELD_NAME: Final[str] = '__id'
@@ -18,6 +14,7 @@ REF_FIELD_PREFIX: Final[str] = '__ref__'
 CONTEXT_DEPTH: Final[str] = '__\x01__depth'
 CONTEXT_PATH: Final[str] = '__\x01__path'
 CONTEXT_ELEMENT: Final[str] = '__\x01__element'
+CONTEXT_ROOT_REF: Final[str] = '__\x01__root_ref'
 
 
 class DictFlat():
@@ -142,8 +139,8 @@ class DictFlat():
     def __rename_path(self, path: str) -> str:
         new_path: str = path
         if self.rename:
-            if RENAME_ALL in self.rename:
-                fct: Union[str, Callable] = self.rename[RENAME_ALL]
+            if ALL in self.rename:
+                fct: Union[str, Callable] = self.rename[ALL]
                 if isinstance(fct, Callable):
                     if new_path.endswith(self.inner_sep_suffix):
                         new_path = fct(new_path[:-self.inner_sep_suffix_len]) + self.inner_sep_suffix
@@ -210,22 +207,28 @@ class DictFlat():
                 extra[counter_field] += 1
 
     def __flat_dd_2_d(self, elt_value: Dict, value_path: str) -> Dict:
+        if self.dd_2_dict and (value_path in self.dd_2_dict or ALL in self.dd_2_dict):
 
-        if self.dd_2_dict and value_path in self.dd_2_dict:
-            dd2d_def: Dict = self.dd_2_dict[value_path]
+            if value_path in self.dd_2_dict:
+                dd2d_def: Dict = self.dd_2_dict[value_path]
+            else:
+                dd2d_def: Dict = self.dd_2_dict[ALL]
 
             reverse: bool = dd2d_def.get('reverse', False)
             obj_sep: bool = dd2d_def.get('sep', self.sep)
 
             new_object: Dict[str, Any] = {}
+            new_key: str = ''
             for object_id in elt_value:
                 the_object: Dict = elt_value[object_id]
                 if isinstance(the_object, dict):
+                    the_object = self.__flat_dd_2_d(the_object, '%s%s%s' % (value_path, self.sep, object_id))
                     for object_key in the_object:
                         if reverse:
-                            new_object['%s%s%s' % (object_key, obj_sep, object_id)] = the_object[object_key]
+                            new_key = '%s%s%s' % (object_key, obj_sep, object_id)
                         else:
-                            new_object['%s%s%s' % (object_id, obj_sep, object_key)] = the_object[object_key]
+                            new_key = '%s%s%s' % (object_id, obj_sep, object_key)
+                        new_object[new_key] = the_object[object_key]
                 else:
                     new_object['%s' % object_id] = the_object
 
@@ -253,6 +256,9 @@ class DictFlat():
             father_id=father_id
         )
         current_dict_id: Any = current_dict[self.id_field_name]
+
+        if self.dd_2_dict and ALL in self.dd_2_dict:
+            d = self.__flat_dd_2_d(d, ALL)
 
         for elt_name in d:
 

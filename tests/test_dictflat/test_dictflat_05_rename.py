@@ -8,7 +8,7 @@ from test_dictflat.common_fct_test import (
 )
 
 from dictflat import DictFlat
-from dictflat.dictflat import RENAME_ALL
+from dictflat.dictflat import ALL
 from dictflat.tool_functions import str_2_snakecase
 
 
@@ -138,7 +138,7 @@ def test_dictflat__rename_with_fct_and_context() -> None:
             'rk.birth.date_dict': date2dict,
         },
         rename={
-            RENAME_ALL: rename_all,
+            ALL: rename_all,
             'rk.birth.date': rename_date,
         }
     ).flat(

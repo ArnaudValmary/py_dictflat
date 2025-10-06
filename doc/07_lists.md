@@ -218,7 +218,7 @@ DictFlat(
         "rk.birth.date_dict": date2dict,
     },
     rename={
-        RENAME_ALL: str_2_snakecase,
+        ALL: str_2_snakecase,
         "rk.birth.date": "rk.birth.date_dict",
         "rk.phone_numbers.__inner": "number",
     }

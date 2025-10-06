@@ -88,8 +88,12 @@ dist_clean:
 	rm -rf dist
 
 dist: dist_clean
-	sed -ie "s/^\(DICTFLAT_VERSION: Final\[List\[str\]\] = \).*$$/\1$(project_version_list)/" ./src/dictflat/dictflat.py
-	poetry build
+	sed \
+		-i \
+		-e \
+		"s/^\(__version_parts__: Final\[List\[str\]\] = \).*$$/\1$(project_version_list)/" \
+		./src/dictflat/__init__.py \
+	&& poetry build
 
 publish: dist
 	poetry publish

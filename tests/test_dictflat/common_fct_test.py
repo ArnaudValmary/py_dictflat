@@ -1,6 +1,6 @@
 from datetime import datetime
 from hashlib import sha256
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from dictflat.dictflat import CONTEXT_DEPTH, CONTEXT_ELEMENT, CONTEXT_PATH
 from dictflat.tool_functions import str_2_snakecase
@@ -19,8 +19,7 @@ def clean_ids(d: Dict) -> None:
 
 
 def fct_build_id(d: Dict, path: str) -> str:
-    id: Any = None
-    id = sha256(
+    id: str = sha256(
         '#'.join(
             [
                 str(d.get(k, '?%s?' % k))

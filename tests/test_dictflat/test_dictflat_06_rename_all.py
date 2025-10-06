@@ -3,7 +3,7 @@ from typing import Dict, List
 from test_dictflat.common_fct_test import date2dict, fct_build_id
 
 from dictflat import DictFlat
-from dictflat.dictflat import RENAME_ALL
+from dictflat.dictflat import ALL
 from dictflat.tool_functions import str_2_snakecase
 
 
@@ -15,7 +15,7 @@ def test_dictflat__rename_all() -> None:
             'rk.birth.date_dict': date2dict,
         },
         rename={
-            RENAME_ALL: str_2_snakecase,
+            ALL: str_2_snakecase,
             'rk.birth.date': 'rk.birth.date_dict',
         }
     ).flat(

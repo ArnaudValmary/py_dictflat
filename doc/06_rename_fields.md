@@ -96,7 +96,7 @@ Result:
 
 #### Rename ALL field names
 
-You could rename all fields using the "`RENAME_ALL`" special key and un function to do this.
+You could rename all fields using the "`ALL`" special key and un function to do this.
 
 The "`Callable`" dictionnary key function signature is:
 
@@ -105,7 +105,7 @@ def fct_name(s: str) -> str
 ```
 
 **IMPORTANT**
-**You could use "`RENAME_ALL`" key and field name keys. "`RENAME_ALL`" key is allway use BEFORE field name keys**
+**You could use "`ALL`" key and field name keys. "`ALL`" key is allway use BEFORE field name keys**
 
 In this example, the function "[`str_2_snakecase`](https://github.com/ArnaudValmary/py_dictflat/blob/main/src/dictflat/tool_functions.py#L10)" is called before the other rename key.
 
@@ -119,7 +119,7 @@ DictFlat(
         "rk.birth.date_dict": date2dict,
     },
     rename={
-        RENAME_ALL: str_2_snakecase,
+        ALL: str_2_snakecase,
         "rk.birth.date": "rk.birth.date_dict",
     }
 ).flat(
@@ -196,7 +196,7 @@ The `context` parameter is a dictionnary who contains three keys:
 
 You could add any other keys during init step with optional `context` parameter.
 
-You could use `context` for one field renaing or for all fields (with special key `RENAME_ALL`).
+You could use `context` for one field renaing or for all fields (with special key `ALL`).
 
 An example:
 
@@ -219,7 +219,7 @@ DictFlat(
         'rk.birth.date_dict': date2dict,
     },
     rename={
-        RENAME_ALL: rename_all,
+        ALL: rename_all,
         'rk.birth.date': rename_date,
     }
 ).flat(
