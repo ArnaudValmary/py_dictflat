@@ -1,4 +1,3 @@
-import json
 from typing import Dict, List
 
 from test_dictflat.common_fct_test import fct_build_id
@@ -42,7 +41,7 @@ def test_dictflat__dict_of_dict__all() -> None:
         }
     )
 
-    print("DF=%s" % json.dumps(df, indent=2))
+    # print("DF=%s" % json.dumps(df, indent=2))
 
     assert df == {
         'rk': [
@@ -103,7 +102,7 @@ def test_dictflat__dict_of_dict__all_list() -> None:
         }
     )
 
-    print("DF=%s" % json.dumps(df, indent=2))
+    #  print("DF=%s" % json.dumps(df, indent=2))
 
     assert df == {
         'rk': [
@@ -194,7 +193,7 @@ def test_dictflat__dict_of_dict__all_list_of_dd() -> None:
         }
     )
 
-    print("DF=%s" % json.dumps(df, indent=2))
+    # print("DF=%s" % json.dumps(df, indent=2))
 
     assert df == {
         'rk': [

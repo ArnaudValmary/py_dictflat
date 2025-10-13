@@ -1,4 +1,6 @@
 # test_dicttools.py
+from typing import Dict
+
 import pytest
 
 from dictflat.dicttools import get_dict
@@ -16,5 +18,5 @@ def test_get_dict(input_dict, expected):
     """
     Test the get_dict function with various inputs to ensure it returns a valid dictionary.
     """
-    result = get_dict(input_dict)
+    result: Dict = get_dict(input_dict)
     assert result == expected
