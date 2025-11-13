@@ -1,6 +1,6 @@
 [project]
 name = "dictflat"
-version = "0.2.1"
+version = "0.2.2"
 description = "A Python library to flatten a dictionary with nested dictionnaries and lists"
 authors = [{name = "Arnaud Valmary"}]
 readme = "README.md"
@@ -35,7 +35,7 @@ isort = "7.0.0"
 [tool.poetry.group.test]
 optional = true
 [tool.poetry.group.test.dependencies]
-pytest = "8.4.2"
+pytest = "9.0.1"
 pytest-cov = "7.0.0"
 
 # [tool.poetry.group.docs]

@@ -1,4 +1,36 @@
 #!/usr/bin/env python
+"""
+A module for flattening nested dictionaries and lists into a simplified structure.
+
+This module provides the DictFlat class which can transform complex nested dictionaries
+and lists into flattened structures with customizable options for handling various data
+types and transformations. It supports features like renaming keys, dropping specific
+paths, changing values through custom functions, and handling special cases for lists
+and dictionaries of dictionaries.
+
+Key Features:
+- Flatten nested dictionaries and lists into a simplified structure
+- Customizable key renaming and path building
+- Support for dropping specific paths from the output
+- Value transformation through custom functions
+- Special handling for lists and dictionaries of dictionaries
+- Context tracking during the flattening process
+- Custom ID generation for dictionary elements
+
+The module uses several special constants for internal processing:
+- ALL: Marker for operations that apply to all elements
+- CHANGE_ROOT: Marker for root element changes
+- INNER_SUFFIX: Suffix for inner elements
+- ID_FIELD_NAME: Default field name for ID storage
+- REF_FIELD_PREFIX: Prefix for reference fields
+- CONTEXT_*: Constants for tracking context during processing
+
+Example:
+    >>> from dictflat import DictFlat
+    >>> flattener = DictFlat(sep='_', rename={'old_name': 'new_name'})
+    >>> nested_dict = {'a': {'b': [1, 2, 3]}, 'c': {'d': 'value'}}
+    >>> flattened = flattener.flat(nested_dict)
+"""
 
 from typing import Any, Callable, Dict, Final, List, Optional, Tuple, Union
 

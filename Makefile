@@ -1,3 +1,34 @@
+# This Makefile provides a set of commands to manage a Python project using Poetry.
+#
+# It includes the following functionalities:
+# - Displaying project and environment information
+# - Managing dependencies (installation, cleaning, and displaying)
+# - Running tests and cleaning test cache directories
+# - Running and displaying code coverage reports
+# - Building and publishing the project
+# - Cleaning various directories and caches
+#
+# The Makefile uses Poetry for dependency management and packaging.
+# It also uses pytest for testing and coverage reporting.
+#
+# Phony targets (non-file targets):
+# - doc: Display project and environment information
+# - deps: Install default dependencies
+# - deps_clean: Clean Poetry environment and lock file
+# - deps_all: Install all dependencies
+# - deps_show: Show dependencies tree
+# - deps_show_all: Show all dependencies tree
+# - test: Run tests
+# - test_clean: Clean test cache directories
+# - cov: Run coverage
+# - cov_open: Run coverage and open result in Firefox
+# - cov_clean: Clean coverage results
+# - dist: Build wheel package
+# - dist_clean: Clean package directory
+# - publish: Publish the package
+# - clean: Call all cleaning targets
+# - force: Call cleaning, install all dependencies, and run tests
+
 cur_dir = $(shell pwd)
 
 poetry_version        = $(shell poetry --version)
