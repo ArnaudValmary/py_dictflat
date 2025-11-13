@@ -1,70 +1,17 @@
-#!/usr/bin/env python
-"""
-Dictionary Utility Functions
-
-This module provides utility functions for working with nested dictionaries, including
-flattening nested dictionaries and extracting lists from dictionaries, functions to
-retrieve and set nested values within dictionaries using path strings or lists of keys.
-
-Functions:
-    - get_dict: Safely returns a dictionary from the input, ensuring a valid dictionary is returned.
-    - simple_flat: Recursively flattens a nested dictionary structure into a single-level dictionary.
-    - extract_list: Extracts and separates list values from a dictionary.
-    - get_nested_value: Retrieves a nested value from a dictionary using a path.
-    - set_nested_value: Sets a nested value in a dictionary using a path, with options
-                        for handling lists and ensuring unique values.
-
-The functions in this module are designed to handle edge cases such as None inputs
-and to provide flexible options for processing different types of dictionary structures.
-"""
-
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
-def get_dict(d: Optional[Dict] = None, key: Optional[Any] = None) -> Dict:
+def get_dict(d: Optional[Dict] = None) -> Dict:
     """
-    Safely returns a dictionary from the input, with handling for non-dictionary inputs.
-
-    This function validates the input and ensures a dictionary is always returned. It handles
-    three cases:
-    1. If the input is None, returns an empty dictionary
-    2. If the input is not a dictionary but a key is provided, returns a single-key dictionary
-       with the input value assigned to the provided key
-    3. If the input is a valid dictionary, returns it unchanged
+    Safely returns a dictionary from the input, ensuring a valid dictionary is returned.
 
     Args:
-        d: An optional input to convert to a dictionary. Can be None, a dictionary,
-           or any other type.
-        key: An optional key to use when the input is not a dictionary. If provided and
-             the input is not a dictionary, the function returns {key: d}.
+        d: An optional dictionary to validate. If None or not a dictionary, returns an empty dict.
     Returns:
-        A dictionary. The behavior depends on the input:
-        - If d is None: returns {}
-        - If d is not a dictionary and key is provided: returns {key: d}
-        - If d is not a dictionary and key is None: returns {}
-        - If d is a dictionary: returns d unchanged
-
-    Examples:
-        >>> get_dict(None)
-        {}
-
-        >>> get_dict("value", "data")
-        {'data': 'value'}
-
-        >>> get_dict("value")
-        {}
-
-        >>> get_dict({"a": 1})
-        {'a': 1}
-
-        >>> get_dict([1, 2, 3], "list_data")
-        {'list_data': [1, 2, 3]}
+        A dictionary. If the input is None or not a dictionary, returns an empty dictionary.
+        Otherwise, returns the input dictionary unchanged.
     """
-    if d is None:
-        return {}
-    elif not isinstance(d, dict):
-        if key is not None:
-            return {key: d}
+    if d is None or not isinstance(d, dict):
         return {}
     return d
 
